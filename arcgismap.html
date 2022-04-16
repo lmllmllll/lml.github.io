@@ -1,0 +1,174 @@
+﻿<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>
+        Intro to MapView - Create a 2D map | Sample | ArcGIS API for JavaScript
+        4.23
+    </title>
+    <style>
+
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 97%;
+            width: 95%;
+        }
+
+        body {
+            position: relative;
+        }
+
+        .yeMei {
+            box-sizing: border-box;
+            height: 50px;
+            width: 110.8%;
+            background-color: rgb(247,150,70,0.8);
+            font-size: 30px;
+            color: white;
+            padding-left: 30px;
+        }
+
+        #basemapGalleryDiv {
+            position: absolute;
+            top: 50px;
+            left: 95%;
+            height: 97%;
+            width: 180px;
+            z-index: 1;
+        }
+    </style>
+    <link rel="stylesheet"
+          href="https://js.arcgis.com/4.23/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.23/"></script>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/widgets/CoordinateConversion",
+            "esri/layers/FeatureLayer",
+            "esri/widgets/Legend",
+            "esri/widgets/ScaleBar",
+            "esri/widgets/Search",
+            "esri/widgets/LayerList", "esri/widgets/BasemapGallery", "esri/widgets/Editor",
+            "esri/widgets/Print", "esri/widgets/Expand"
+        ], (
+            Map,
+            MapView,
+            CoordinateConversion,
+            FeatureLayer,
+            Legend,
+            ScaleBar,
+            Search,
+            LayerList, BasemapGallery, Editor,
+            Print, Expand
+        ) => {
+                const flayer = new FeatureLayer({
+                    url: "https://services3.arcgis.com/U26uBjSD32d7xvm2/arcgis/rest/services/%E4%B8%AD%E5%9B%BD312%E4%B8%AA%E5%8E%86%E5%8F%B2%E6%96%87%E5%8C%96%E5%90%8D%E9%95%87%E5%8F%8A%E6%99%AF%E5%8C%BA%E7%A9%BA%E9%97%B4%E7%82%B9%E4%BD%8D/FeatureServer",
+                    title: "中国312个文化名镇和景区空间分布"
+                });
+                const map = new Map({
+                    basemap: "streets-vector",
+                    layers: [flayer]
+                });
+
+                map.basemap = "arcgis-nova";
+
+                const view = new MapView({
+                    container: "viewDiv",
+                    map: map,
+                    zoom: 3,
+                    center: [95, 37] // longitude, latitude
+                });
+
+                let ccWidget = new CoordinateConversion({
+                    view: view,
+                    layers: [flayer]
+                });
+                view.ui.add(ccWidget, "bottom-right");
+
+                let legend = new Legend({
+                    view: view,
+                    layerInfos: [
+                        {
+                            layer: flayer,
+                            title: "中国312个文化名镇和景区"
+                        }
+                    ]
+                });
+                view.ui.add(legend, "bottom-left");
+
+                const searchWidget = new Search({
+                    view: view,
+                    layers: [flayer]
+                });
+                view.ui.add(searchWidget, {
+                    position: "top-right",
+                    index: 2
+                });
+
+
+                let scaleBar = new ScaleBar({
+                    view: view,
+                    layer: flayer,
+                    style: "ruler"
+                });
+                view.ui.add(scaleBar, {
+                    unit: "dual",
+                    position: "bottom-right"
+                });
+
+                let basemapGallery = new BasemapGallery({
+                    view: view,
+                    layer: flayer,
+                    container: basemapGalleryDiv
+                });
+
+                const editor = new Editor({
+                    view: view
+                });
+
+
+                const print = new Print({
+                    view: view,
+                    printServiceUrl:
+                        "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+
+                });
+
+                layerList = new LayerList({
+                    container: document.createElement("div"),
+                    view: view
+                });
+                layerListExpand1 = new Expand({
+                    expandIconClass: "esri-icon-layer-list",
+                    view: view,
+                    content: layerList
+                });
+                view.ui.add(layerListExpand1, "top-right");
+
+                let prexpand = new Expand({
+                    view: view,
+                    content: print
+                });
+                view.ui.add(prexpand, "top-right");
+
+                layerListExpand3 = new Expand({
+
+                    view: view,
+                    content: editor
+                });
+                view.ui.add(layerListExpand3, "top-left");
+
+            })
+    </script>
+</head>
+<body>
+    <div id="basemapGalleryDiv"></div>
+    <div class="yeMei">中国312个历史文化名镇及景区空间点位</div>
+    <div id="viewDiv"></div>
+</body>
+</html>
